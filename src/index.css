@@ -1,6 +1,7 @@
 body, html {
   margin: 0;
    height: 100%;
+  font-family: Arial, sans-serif;
    }
 .homepagelogo{
   position: relative;
@@ -24,6 +25,7 @@ body, html {
   background-position: center;
   background-size: cover;
   opacity: 0.5;
+  z-index: -1;
 }
 .loginform{
   display: flex;
@@ -42,5 +44,16 @@ body, html {
   margin: 10px;
   cursor:pointer;
   background-color: green;
+  border-radius: 10px;
+}
+.hlogin{
+  margin: 20px;
+}
+.hlb{
+  font-size: 1.5rem;
+  padding: 5px;
+  margin: 10px;
+  cursor:pointer;
+  background-color: rgb(195, 204, 195);
   border-radius: 10px;
 }

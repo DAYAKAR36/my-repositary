@@ -1,17 +1,21 @@
 
 import React ,{useState} from "react";
+import { useNavigate } from "react-router-dom";
 function Login(){
 const [name,setName] = useState("");
 const [pass,setPass] = useState("");
+const navigate = useNavigate();
 function handleNameChange(event){
   setName(event.target.value);
 }
 function handlePassChange(event){
   setPass(event.target.value)
 }
-function handleLogin(){
+function handleLogin(e){
+  e.preventDefault();
+
   if(name === usename && pass === passwoord){
-    alert("login successful");
+  navigate('/files');
   }
   else
   {
