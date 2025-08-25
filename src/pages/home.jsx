@@ -1,24 +1,25 @@
-import { useNavigate } from "react-router-dom"; 
-function Homepage() {
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./HomePage.css"; // import css file
+
+function HomePage() {
   const n=useNavigate();
- function handlehlogin(e){
+function handletologin(e)
+{
   e.preventDefault();
- n('/login');
- }
+  n('/login');
+}
   return (
-      <div className="homepagelogo"><div >
-        <div className="content">
-          <h1>Welcome to </h1>
-          <h1>Government polytechnic </h1>
-          <h1>Chodavaram</h1>
-       
-      <div className="hlogin">
-      <button className="hlb" onClick={handlehlogin}>Login</button>
-       </div>
+    <div className="homepage">
+      <div className="overlay">
+        <h1>Welcome to Government Polytechnic Chodavaram</h1>
+        <p>Your Gateway to Excellence in Technical Education</p>
+        <div className="buttons">
+          <button className="about-btn">About</button>
+          <button className="login-btn" onClick={handletologin}>Login</button>
+        </div>
       </div>
     </div>
-      </div>
-  
-      );
+  );
 }
-export default Homepage;
+export default HomePage;

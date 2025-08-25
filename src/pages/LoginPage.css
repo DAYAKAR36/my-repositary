@@ -1,0 +1,91 @@
+/* Center the box */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f6f7;
+  font-family: Arial, sans-serif;
+}
+
+/* White box */
+.login-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  width: 320px;
+  text-align: center;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #b60000;
+}
+
+/* Labels */
+.login-box label {
+  display: block;
+  text-align: left;
+  margin: 10px 0 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Inputs */
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+.login-box input:focus {
+  border-color: #b60000;
+}
+
+/* Password wrapper with eye icon */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .toggle {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Button */
+.login-btn {
+  width: 100%;
+  background: #b60000;
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background: #900000;
+}
+
+/* Forgot password */
+.forgot {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+}
+.forgot:hover {
+  text-decoration: underline;
+}

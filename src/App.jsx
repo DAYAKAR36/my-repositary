@@ -1,15 +1,17 @@
 import React from "react";
 import {BrowserRouter,Route,Routes} from "react-router";
-import Login from "./pages/login.jsx"
 import Homepage from "./pages/home.jsx";
 import TransferCertificate from "./pages/Tc.jsx";
 import Card from "./pages/files.jsx"; 
+import LoginPage from "./pages/login.jsx";
+import StudentPage from "./pages/sel.jsx";
 function App(){
   return(
      <BrowserRouter>
      <Routes>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/home" element={<Homepage/>}/>
+          <Route path="/sel" element={<StudentPage/>}/>
+          <Route path="/login" element={<LoginPage/>}/>
+          <Route path="/" element={<Homepage/>}/>
           <Route path="/tc" element={<TransferCertificate/>}/>
           <Route path="/files" element={<Card/>}/>
      </Routes>
