@@ -34,9 +34,12 @@ p {
 
 .about-btn,
 .login-btn {
-  padding: 10px 20px;
+  padding: 10px 0;
+  min-width: 140px;
+  text-align: center;
   border: none;
   border-radius: 10px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
 }
@@ -52,6 +55,9 @@ p {
 
 .login-btn {
   background: royalblue;
+  background: lime;
+  width: 200px;
+  height: 60px;
   color: white;
 }
 

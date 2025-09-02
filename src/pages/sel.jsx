@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-function StudentPage() {
+function StudentSelPage() {
   const [branch, setBranch] = useState("");
   const [year, setYear] = useState("");
   const [students, setStudents] = useState([]);
@@ -104,4 +104,4 @@ function StudentPage() {
   );
 }
 
-export default StudentPage;
+export default StudentSelPage;
