@@ -1,125 +1,160 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 
-// Main Page Component
-function StudentSelPage() {
-  const [branch, setBranch] = useState("");
-  const [year, setYear] = useState("");
-  const [students, setStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [selectedDocument, setSelectedDocument] = useState(null);
+class StudentPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      branch: "",
+      year: "",
+      students: [],
+      searchPin: "",
+      error: ""
+    };
 
-  function generateStudents(selectedBranch, selectedYear) {
-    var prefix = "";
-    if (selectedYear === "1st Year") prefix = "25635";
-    else if (selectedYear === "2nd Year") prefix = "24635";
-    else if (selectedYear === "3rd Year") prefix = "23635";
-
-    var branchCode = selectedBranch === "CME" ? "CM" : "EC";
-
-    var list = [];
-    for (var i = 1; i <= 60; i++) {
-      var roll = String(i).padStart(3, "0");
-      list.push(prefix + " " + branchCode + " " + roll);
-    }
-    return list;
+    this.handleBranchChange = this.handleBranchChange.bind(this);
+    this.handleYearChange = this.handleYearChange.bind(this);
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleFetchStudents = this.handleFetchStudents.bind(this);
   }
 
-  function handleGenerate() {
-    if (branch && year) {
-      setStudents(generateStudents(branch, year));
-      setSelectedStudent(null);
-      setSelectedDocument(null);
+  handleBranchChange(e) {
+    this.setState({ branch: e.target.value, searchPin: "", error: "" });
+  }
+
+  handleYearChange(e) {
+    this.setState({ year: e.target.value, searchPin: "", error: "" });
+  }
+
+  handleSearchChange(e) {
+    this.setState({ searchPin: e.target.value, error: "" });
+  }
+
+  async handleFetchStudents() {
+    const { branch, year, searchPin } = this.state;
+
+    // Search by PIN if provided
+    if (searchPin.trim()) {
+      const pinRegex = /^\d{5}-(cm|ec)-\d{3}$/i;
+      if (!pinRegex.test(searchPin)) {
+        this.setState({
+          error: "Invalid PIN format! Use 23635-cm-002",
+          students: []
+        });
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5000/students?pin=${encodeURIComponent(searchPin.trim())}`
+        );
+        const data = await response.json();
+
+        if (data.length === 0) {
+          this.setState({ error: "No student found", students: [] });
+        } else {
+          this.setState({ students: data, error: "" });
+        }
+      } catch (err) {
+        console.error(err);
+        this.setState({ error: "Error searching student", students: [] });
+      }
+
+      return;
+    }
+
+    // If PIN is not given, search by Branch + Year
+    if (!branch || !year) {
+      this.setState({
+        error: "Please select both branch and year or enter a valid PIN.",
+        students: []
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/students?branch=${encodeURIComponent(branch)}&year=${encodeURIComponent(year)}`
+      );
+      const data = await response.json();
+      this.setState({ students: data, error: "" });
+    } catch (err) {
+      console.error(err);
+      this.setState({ error: "Error fetching students", students: [] });
     }
   }
 
-  var documents = ["Transfer Certificate", "Study Certificate", "Bus Pass Application"];
+  render() {
+    const { branch, year, students, searchPin, error } = this.state;
 
-  return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h2>Student Certificate Portal</h2>
+    return (
+      <div style={{ padding: "20px", fontFamily: "Arial" }}>
+        <h2>Student Certificate Portal</h2>
 
-      {/* Branch and Year Selection */}
-      <div style={{ backgroundColor: "#add8e6", padding: "15px", borderRadius: "8px" }}>
-        <label>
-          Branch:{" "}
-          <select value={branch} onChange={function (e) { setBranch(e.target.value); }}>
-            <option value="">Select Branch</option>
-            <option value="CME">CME</option>
-            <option value="ECE">ECE</option>
-          </select>
-        </label>
+        {/* Search bar */}
+        <div style={{ textAlign: "right", marginBottom: "10px" }}>
+          <input
+            type="text"
+            placeholder="Enter PIN (e.g. 23635-cm-002)"
+            value={searchPin}
+            onChange={this.handleSearchChange}
+            style={{ padding: "5px" }}
+          />
+        </div>
 
-        <label style={{ marginLeft: "20px" }}>
-          Year:{" "}
-          <select value={year} onChange={function (e) { setYear(e.target.value); }}>
-            <option value="">Select Year</option>
-            <option value="1st Year">1st Year</option>
-            <option value="2nd Year">2nd Year</option>
-            <option value="3rd Year">3rd Year</option>
-          </select>
-        </label>
+        {/* Branch + Year Selection */}
+        <div
+          style={{
+            backgroundColor: "#add8e6",
+            padding: "15px",
+            borderRadius: "8px"
+          }}
+        >
+          <label>
+            Branch:{" "}
+            <select value={branch} onChange={this.handleBranchChange}>
+              <option value="">Select Branch</option>
+              <option value="CME">CME</option>
+              <option value="ECE">ECE</option>
+            </select>
+          </label>
 
-        <button onClick={handleGenerate} style={{ marginLeft: "20px" }}>
-          Show Students
-        </button>
-      </div>
+          <label style={{ marginLeft: "20px" }}>
+            Year:{" "}
+            <select value={year} onChange={this.handleYearChange}>
+              <option value="">Select Year</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+            </select>
+          </label>
 
-      {/* Student List */}
-      <div style={{ marginTop: "20px" }}>
-        {students.map(function (stu, index) {
-          return (
+          <button onClick={this.handleFetchStudents} style={{ marginLeft: "20px" }}>
+            Fetch Students
+          </button>
+        </div>
+
+        {/* Error message */}
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+
+        {/* Students List */}
+        <div style={{ marginTop: "20px" }}>
+          {students.map((stu, index) => (
             <div
               key={index}
-              onClick={function () {
-                setSelectedStudent(stu);
-                setSelectedDocument(null);
-              }}
               style={{
                 padding: "8px 12px",
                 margin: "4px 0",
                 backgroundColor: "#f2f2f2",
-                borderRadius: "6px",
-                cursor: "pointer",
+                borderRadius: "6px"
               }}
             >
-              {stu}
-              {/* Show documents when student is clicked */}
-              {selectedStudent === stu && (
-                <div style={{ marginTop: "10px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                  {documents.map(function (doc, i) {
-                    return (
-                      <div
-                        key={i}
-                        onClick={function () { setSelectedDocument(doc); }}
-                        style={{
-                          padding: "8px 14px",
-                          backgroundColor: "#66ccff",
-                          borderRadius: "20px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {doc}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              {stu.pin} | {stu.name} | {stu.clgCode} | {stu.institutionName} | {stu.branch} | {stu.year}
             </div>
-          );
-        })}
-      </div>
-
-      {/* Display Selected Student and Document */}
-      {selectedStudent && selectedDocument && (
-        <div style={{ marginTop: "30px", padding: "15px", border: "1px solid #ccc", borderRadius: "8px" }}>
-          <h3>Selection Details</h3>
-          <p>
-            <b>{selectedDocument} of student {selectedStudent} has been selected.</b>
-          </p>
+          ))}
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
-export default StudentSelPage;
+export default StudentPage;

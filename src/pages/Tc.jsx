@@ -1,126 +1,114 @@
-import React from "react";
+import React, { useState } from "react";
 
-const TransferCertificate = () => {
+function TransferCertificateForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    pin: "",
+    father: "",
+    nationality: "",
+    caste: "",
+    dob: "",
+    admission: "",
+    leaving: "",
+    class: "",
+    fees: "",
+    conduct: "",
+    appdate: "",
+    reason: ""
+  });
+
+  const [show, setShow] = useState(false);
+
+  function handleChange(e) {
+    const id = e.target.id;
+    const value = e.target.value;
+    setFormData(function (prev) {
+      return { ...prev, [id]: value };
+    });
+  }
+
+  function generateCertificate() {
+    setShow(true);
+  }
+
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "30px", width: "700px", margin: "auto" }}>
-      
-      {/* Top Left and Right Info */}
-      <div style={{ position: "relative", fontSize: "12px", height: "20px" }}>
-        <div style={{ position: "absolute", left: "0" }}>
-          T.C. No.
-        </div>
-        <div style={{ position: "absolute", right: "0" }}>
-          Admission Register Page No.:
-        </div>
+    <div style={{ fontFamily: "Arial", margin: "30px" }}>
+      <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
+        Transfer Certificate Form
+      </h2>
+
+      <div style={{ marginBottom: "20px" }}>
+        <label>1. Name of Student:</label>
+        <input id="name" value={formData.name} onChange={handleChange} /><br />
+
+        <label>2. PIN:</label>
+        <input id="pin" value={formData.pin} onChange={handleChange} /><br />
+
+        <label>3. Father's Name:</label>
+        <input id="father" value={formData.father} onChange={handleChange} /><br />
+
+        <label>4. Nationality / Religion:</label>
+        <input id="nationality" value={formData.nationality} onChange={handleChange} /><br />
+
+        <label>5. Caste:</label>
+        <input id="caste" value={formData.caste} onChange={handleChange} /><br />
+
+        <label>6. Date of Birth:</label>
+        <input type="date" id="dob" value={formData.dob} onChange={handleChange} /><br />
+
+        <label>7. Admission Date:</label>
+        <input type="date" id="admission" value={formData.admission} onChange={handleChange} /><br />
+
+        <label>8. Leaving Date:</label>
+        <input type="date" id="leaving" value={formData.leaving} onChange={handleChange} /><br />
+
+        <label>9. Class at Leaving:</label>
+        <input id="class" value={formData.class} onChange={handleChange} /><br />
+
+        <label>10. Fees Paid (Yes/No):</label>
+        <input id="fees" value={formData.fees} onChange={handleChange} /><br />
+
+        <label>11. Conduct & Character:</label>
+        <input id="conduct" value={formData.conduct} onChange={handleChange} /><br />
+
+        <label>12. Application Date:</label>
+        <input type="date" id="appdate" value={formData.appdate} onChange={handleChange} /><br />
+
+        <label>13. Reason for Applying:</label>
+        <input id="reason" value={formData.reason} onChange={handleChange} /><br /><br />
+
+        <button onClick={generateCertificate}>Generate Certificate</button>
       </div>
 
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: "20px", marginTop: "10px" }}>
-        <h1 style={{ margin: 0, fontSize: "24px" }}>GOVERNMENT POLYTECHNIC</h1>
-        <h2 style={{ margin: "5px 0", fontSize: "18px" }}>CHODAWARAM - 521 032</h2>
-        <h3 style={{ margin: "5px 0", fontSize: "20px" }}>TRANSFER CERTIFICATE</h3>
-      </div>
+      {show && (
+        <div style={{ marginTop: "40px", border: "2px solid black", padding: "20px" }}>
+          <h2 style={{ textAlign: "center" }}>
+            GOVERNMENT POLYTECHNIC<br />
+            CHODAVARAM - 521 032<br />
+            TRANSFER CERTIFICATE
+          </h2>
+          <p>1. Name of Student: {formData.name}</p>
+          <p>2. PIN: {formData.pin}</p>
+          <p>3. Father's Name: {formData.father}</p>
+          <p>4. Nationality / Religion: {formData.nationality}</p>
+          <p>5. Caste: {formData.caste}</p>
+          <p>6. Date of Birth: {formData.dob}</p>
+          <p>7. Date of Admission: {formData.admission}</p>
+          <p>8. Date of Leaving: {formData.leaving}</p>
+          <p>9. Class: {formData.class}</p>
+          <p>10. Fees Paid: {formData.fees}</p>
+          <p>11. Conduct & Character: {formData.conduct}</p>
+          <p>12. Application Date: {formData.appdate}</p>
+          <p>13. Reason for Applying: {formData.reason}</p>
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
-  <tr>
-    <td style={{ width: "30%", fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      1. Name of the Student in full (Block Letters)
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      2. PIN
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      3. Father's Name
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      4. Nationality / Religion
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      5. Caste
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      6. Date of Birth as entered in the admission Register
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      7. Date on which he/she was admitted into the Institution
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      8. Date on which he/she left the Institution
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      9. Class in which he/she was studying at the time of leaving (in words)
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      10. Whether he/she paid all fees or any other due to the Institution
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      11. Conduct and Character
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      12. Date of application for Transfer certificate
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-  <tr>
-    <td style={{ fontWeight: "bold", padding: "5px 0", verticalAlign: "top" }}>
-      13. Reason for applying
-    </td>
-    <td style={{ verticalAlign: "top" }}>:</td>
-  </tr>
-</table>
-
-      {/* Date */}
-      <div style={{ textAlign: "left", marginTop: "30px" }}>
-        <strong>Date:</strong>
-      </div>
-
-      {/* Signature Section */}
-      <div style={{ marginTop: "50px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-        <div style={{ textAlign: "center", width: "45%" }}>
-          <p style={{ margin: 0}}>
-            <strong>Head of Section</strong>
-          </p>
+          <br /><br />
+          <p style={{ float: "left" }}>Head of Section</p>
+          <p style={{ float: "right" }}>Director</p>
+          <div style={{ clear: "both" }}></div>
         </div>
-        <div style={{textAlign: "center", width: "45%" }}>
-          <p style={{ margin: 0 }}>
-           <strong>Principle</strong> 
-          </p>
-        </div>
-      </div>
+      )}
     </div>
   );
-};
-export default TransferCertificate;
+}
+
+export default TransferCertificateForm;
