@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import html2pdf from "html2pdf.js";
+import { useLocation } from "react-router-dom";
 
-function TransferCertificateForm() {
+function TransferCertificate() {
+  const location = useLocation();
+  const pinFromNav = location.state?.pin;
+  const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     name: "",
     pin: "",
@@ -13,102 +19,189 @@ function TransferCertificateForm() {
     class: "",
     fees: "",
     conduct: "",
-    appdate: "",
-    reason: ""
+    appdate: today,
+    reason: "",
   });
+  const [showCertificate, setShowCertificate] = useState(false);
+  const certRef = useRef(null);
 
-  const [show, setShow] = useState(false);
+  useEffect(() => {
+    async function fetchStudentData() {
+      if (!pinFromNav) return;
+      try {
+        const response = await fetch(
+          http://localhost:5000/students?pin=${encodeURIComponent(pinFromNav)}
+        );
+        const data = await response.json();
+        if (data.length > 0) {
+          const s = data[0];
+          setFormData(prev => ({
+            name: s.name || prev.name,
+            pin: s.pin || prev.pin,
+            father: s.father || prev.father,
+            nationality: s.nationality || prev.nationality,
+            caste: s.caste || prev.caste,
+            dob: s.dob || prev.dob,
+            admission: s.admission || prev.admission,
+            leaving: s.leaving || prev.leaving,
+            class: s.class || prev.class,
+            fees: s.fees || prev.fees,
+            conduct: s.conduct || prev.conduct,
+            appdate: s.appdate || prev.appdate,
+            reason: s.reason || prev.reason,
+          }));
+        }
+      } catch (err) {
+        console.error("Fetch student data failed:", err);
+      }
+    }
+    fetchStudentData();
+  }, [pinFromNav]);
 
-  function handleChange(e) {
-    const id = e.target.id;
-    const value = e.target.value;
-    setFormData(function (prev) {
-      return { ...prev, [id]: value };
-    });
-  }
+  const handleChange = e => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  };
 
-  function generateCertificate() {
-    setShow(true);
-  }
+  const generateCertificate = () => setShowCertificate(true);
+  const handlePrint = () => window.print();
+  const handleDownload = () => {
+    const element = certRef.current;
+    const opts = {
+      margin: 0.5,
+      filename: ${formData.name || "certificate"}_TransferCertificate.pdf,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+    };
+    html2pdf().from(element).set(opts).save();
+  };
+
+  const handleSave = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/save-certificate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      alert(res.ok ? "Certificate saved successfully." : "Failed to save.");
+    } catch (err) {
+      console.error("Save error:", err);
+      alert("Error occurred while saving.");
+    }
+  };
 
   return (
-    <div style={{ fontFamily: "Arial", margin: "30px" }}>
+    <div style={{ padding: "30px", fontFamily: "Arial" }}>
       <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
         Transfer Certificate Form
       </h2>
-
-      <div style={{ marginBottom: "20px" }}>
-        <label>1. Name of Student:</label>
-        <input id="name" value={formData.name} onChange={handleChange} /><br />
-
-        <label>2. PIN:</label>
-        <input id="pin" value={formData.pin} onChange={handleChange} /><br />
-
-        <label>3. Father's Name:</label>
-        <input id="father" value={formData.father} onChange={handleChange} /><br />
-
-        <label>4. Nationality / Religion:</label>
-        <input id="nationality" value={formData.nationality} onChange={handleChange} /><br />
-
-        <label>5. Caste:</label>
-        <input id="caste" value={formData.caste} onChange={handleChange} /><br />
-
-        <label>6. Date of Birth:</label>
-        <input type="date" id="dob" value={formData.dob} onChange={handleChange} /><br />
-
-        <label>7. Admission Date:</label>
-        <input type="date" id="admission" value={formData.admission} onChange={handleChange} /><br />
-
-        <label>8. Leaving Date:</label>
-        <input type="date" id="leaving" value={formData.leaving} onChange={handleChange} /><br />
-
-        <label>9. Class at Leaving:</label>
-        <input id="class" value={formData.class} onChange={handleChange} /><br />
-
-        <label>10. Fees Paid (Yes/No):</label>
-        <input id="fees" value={formData.fees} onChange={handleChange} /><br />
-
-        <label>11. Conduct & Character:</label>
-        <input id="conduct" value={formData.conduct} onChange={handleChange} /><br />
-
-        <label>12. Application Date:</label>
-        <input type="date" id="appdate" value={formData.appdate} onChange={handleChange} /><br />
-
-        <label>13. Reason for Applying:</label>
-        <input id="reason" value={formData.reason} onChange={handleChange} /><br /><br />
-
-        <button onClick={generateCertificate}>Generate Certificate</button>
+      <div className="form-section">
+        {Object.entries(formData).map(([k, v]) => {
+          const map = {
+            name: "1. Name of Student",
+            pin: "2. PIN",
+            father: "3. Father's Name",
+            nationality: "4. Nationality / Religion",
+            caste: "5. Caste",
+            dob: "6. Date of Birth",
+            admission: "7. Admission Date",
+            leaving: "8. Leaving Date",
+            class: "9. Class at Leaving",
+            fees: "10. Fees Paid (Yes/No)",
+            conduct: "11. Conduct & Character",
+            appdate: "12. Application Date",
+            reason: "13. Reason for Applying",
+          };
+          const type = ["dob", "admission", "leaving", "appdate"].includes(k)
+            ? "date"
+            : "text";
+          return (
+            <div key={k}>
+              <label style={{ display: "inline-block", width: "250px", marginBottom: "8px" }}>
+                {map[k]}:
+              </label>
+              <input
+                type={type}
+                id={k}
+                value={v}
+                onChange={handleChange}
+                style={{ width: "300px", padding: "5px", marginBottom: "8px" }}
+              />
+              <br />
+            </div>
+          );
+        })}
+        <button onClick={generateCertificate} style={{ marginTop: "15px" }}>
+          Generate Certificate
+        </button>
       </div>
-
-      {show && (
-        <div style={{ marginTop: "40px", border: "2px solid black", padding: "20px" }}>
-          <h2 style={{ textAlign: "center" }}>
-            GOVERNMENT POLYTECHNIC<br />
-            CHODAVARAM - 521 032<br />
-            TRANSFER CERTIFICATE
-          </h2>
-          <p>1. Name of Student: {formData.name}</p>
-          <p>2. PIN: {formData.pin}</p>
-          <p>3. Father's Name: {formData.father}</p>
-          <p>4. Nationality / Religion: {formData.nationality}</p>
-          <p>5. Caste: {formData.caste}</p>
-          <p>6. Date of Birth: {formData.dob}</p>
-          <p>7. Date of Admission: {formData.admission}</p>
-          <p>8. Date of Leaving: {formData.leaving}</p>
-          <p>9. Class: {formData.class}</p>
-          <p>10. Fees Paid: {formData.fees}</p>
-          <p>11. Conduct & Character: {formData.conduct}</p>
-          <p>12. Application Date: {formData.appdate}</p>
-          <p>13. Reason for Applying: {formData.reason}</p>
-
-          <br /><br />
-          <p style={{ float: "left" }}>Head of Section</p>
-          <p style={{ float: "right" }}>Director</p>
-          <div style={{ clear: "both" }}></div>
-        </div>
+      {showCertificate && (
+        <>
+          <div
+            ref={certRef}
+            style={{
+              marginTop: "40px",
+              border: "2px solid black",
+              padding: "20px",
+              backgroundColor: "white",
+            }}
+          >
+            <h2 style={{ textAlign: "center" }}>
+              GOVERNMENT POLYTECHNIC
+              <br />
+              CHODAVARAM - 521 032
+              <br />
+              TRANSFER CERTIFICATE
+            </h2>
+            <table style={{ width: "100%", lineHeight: "1.8em" }}>
+              <tbody>
+                {Object.entries(formData).map(([_, v], i) => {
+                  const labels = [
+                    "1. Name of Student",
+                    "2. PIN",
+                    "3. Father's Name",
+                    "4. Nationality / Religion",
+                    "5. Caste",
+                    "6. Date of Birth",
+                    "7. Date of Admission",
+                    "8. Date of Leaving",
+                    "9. Class",
+                    "10. Fees Paid",
+                    "11. Conduct & Character",
+                    "12. Application Date",
+                    "13. Reason for Applying",
+                  ];
+                  return (
+                    <tr key={i}>
+                      <td style={{ width: "40%", paddingRight: "10px" }}>{labels[i]}</td>
+                      <td>: {v}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <br />
+            <br />
+            <p style={{ float: "left" }}>Head of Section</p>
+            <p style={{ float: "right" }}>Director</p>
+            <div style={{ clear: "both" }}></div>
+          </div>
+          <div style={{ marginTop: "20px" }}>
+            <button onClick={handlePrint} style={{ marginRight: "10px" }}>
+              Print
+            </button>
+            <button onClick={handleDownload} style={{ marginRight: "10px" }}>
+              Download PDF
+            </button>
+            <button onClick={handleSave}>Save</button>
+          </div>
+        </>
       )}
     </div>
   );
 }
 
-export default TransferCertificateForm;
+export default TransferCertificate;

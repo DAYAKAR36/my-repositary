@@ -6,10 +6,12 @@ import Card from "./pages/files.jsx";
 import LoginPage from "./pages/login.jsx";
 import StudentSelPage from "./pages/sel.jsx";
 import StudentPage from "./pages/StudentPage.jsx";
+import StudentBusPassForm from "./pages/bus.jsx";
 function App(){
   return(
      <BrowserRouter>
      <Routes>
+          <Route path="/bus" element={<StudentBusPassForm/>}/>
           <Route path="/select" element={<StudentPage/>}/>
           <Route path="/sel" element={<StudentSelPage/>}/>
           <Route path="/login" element={<LoginPage/>}/>

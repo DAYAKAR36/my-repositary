@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function StudentPage() {
+function StudentPage1() {
   const [students, setStudents] = useState([]);
   const [form, setForm] = useState({ name: "", pin: "", clgCode: "", institutionName: "", branch: "", year: "" });
   const [editId, setEditId] = useState(null);
@@ -8,7 +8,7 @@ function StudentPage() {
   useEffect(() => { loadStudents(); }, []);
 
   async function loadStudents() {
-    const res = await fetch("http://localhost:5000/students");
+    const res = await fetch('http://localhost:5000/students');
     setStudents(await res.json());
   }
 
@@ -59,4 +59,4 @@ function StudentPage() {
   );
 }
 
-export default StudentPage;
+export default StudentPage1;

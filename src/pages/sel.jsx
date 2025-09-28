@@ -1,160 +1,206 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-class StudentPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      branch: "",
-      year: "",
-      students: [],
-      searchPin: "",
-      error: ""
-    };
+function StudentPage() {
+  const n=useNavigate();
+  const n1=useNavigate();
+  const [branch, setBranch] = useState("");
+  const [year, setYear] = useState("");
+  const [students, setStudents] = useState([]);
+  const [searchPin, setSearchPin] = useState("");
+  const [error, setError] = useState("");
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
 
-    this.handleBranchChange = this.handleBranchChange.bind(this);
-    this.handleYearChange = this.handleYearChange.bind(this);
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-    this.handleFetchStudents = this.handleFetchStudents.bind(this);
+  function handleBranchChange(e) {
+    setBranch(e.target.value);
+    setSearchPin("");
+    setError("");
   }
 
-  handleBranchChange(e) {
-    this.setState({ branch: e.target.value, searchPin: "", error: "" });
+  function handleYearChange(e) {
+    setYear(e.target.value);
+    setSearchPin("");
+    setError("");
   }
 
-  handleYearChange(e) {
-    this.setState({ year: e.target.value, searchPin: "", error: "" });
+  function handleSearchChange(e) {
+    setSearchPin(e.target.value);
+    setError("");
   }
 
-  handleSearchChange(e) {
-    this.setState({ searchPin: e.target.value, error: "" });
+  function handleStudentClick(studentId) {
+    if (selectedStudentId === studentId) {
+      setSelectedStudentId(null);
+    } else {
+      setSelectedStudentId(studentId);
+    }
   }
 
-  async handleFetchStudents() {
-    const { branch, year, searchPin } = this.state;
+  async function handleFetchStudents() {
+    setError("");
+    setStudents([]);
+    setSelectedStudentId(null);
 
-    // Search by PIN if provided
     if (searchPin.trim()) {
-      const pinRegex = /^\d{5}-(cm|ec)-\d{3}$/i;
+      var pinRegex = /^\d{5}-(cm|ec)-\d{3}$/i;
       if (!pinRegex.test(searchPin)) {
-        this.setState({
-          error: "Invalid PIN format! Use 23635-cm-002",
-          students: []
-        });
+        setError("Invalid PIN format! Use 23635-cm-002");
         return;
       }
 
       try {
-        const response = await fetch(
-          `http://localhost:5000/students?pin=${encodeURIComponent(searchPin.trim())}`
+        var response = await fetch(
+          "http://localhost:5000/students?pin=" + encodeURIComponent(searchPin.trim())
         );
-        const data = await response.json();
+        var data = await response.json();
 
         if (data.length === 0) {
-          this.setState({ error: "No student found", students: [] });
+          setError("No student found");
         } else {
-          this.setState({ students: data, error: "" });
+          setStudents(data);
         }
       } catch (err) {
         console.error(err);
-        this.setState({ error: "Error searching student", students: [] });
+        setError("Error searching student");
       }
 
       return;
     }
 
-    // If PIN is not given, search by Branch + Year
     if (!branch || !year) {
-      this.setState({
-        error: "Please select both branch and year or enter a valid PIN.",
-        students: []
-      });
+      setError("Please select both branch and year or enter a valid PIN.");
       return;
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/students?branch=${encodeURIComponent(branch)}&year=${encodeURIComponent(year)}`
+      var response= await fetch(
+        "http://localhost:5000/students?branch=" +
+          encodeURIComponent(branch) +
+          "&year=" +
+          encodeURIComponent(year)
       );
-      const data = await response.json();
-      this.setState({ students: data, error: "" });
+      var data= await response.json();
+      setStudents(data);
     } catch (err) {
       console.error(err);
-      this.setState({ error: "Error fetching students", students: [] });
+      setError("Error fetching students");
     }
   }
 
-  render() {
-    const { branch, year, students, searchPin, error } = this.state;
-
-    return (
-      <div style={{ padding: "20px", fontFamily: "Arial" }}>
-        <h2>Student Certificate Portal</h2>
-
-        {/* Search bar */}
-        <div style={{ textAlign: "right", marginBottom: "10px" }}>
-          <input
-            type="text"
-            placeholder="Enter PIN (e.g. 23635-cm-002)"
-            value={searchPin}
-            onChange={this.handleSearchChange}
-            style={{ padding: "5px" }}
-          />
-        </div>
-
-        {/* Branch + Year Selection */}
-        <div
-          style={{
-            backgroundColor: "#add8e6",
-            padding: "15px",
-            borderRadius: "8px"
-          }}
-        >
-          <label>
-            Branch:{" "}
-            <select value={branch} onChange={this.handleBranchChange}>
-              <option value="">Select Branch</option>
-              <option value="CME">CME</option>
-              <option value="ECE">ECE</option>
-            </select>
-          </label>
-
-          <label style={{ marginLeft: "20px" }}>
-            Year:{" "}
-            <select value={year} onChange={this.handleYearChange}>
-              <option value="">Select Year</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
-            </select>
-          </label>
-
-          <button onClick={this.handleFetchStudents} style={{ marginLeft: "20px" }}>
-            Fetch Students
-          </button>
-        </div>
-
-        {/* Error message */}
-        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-
-        {/* Students List */}
-        <div style={{ marginTop: "20px" }}>
-          {students.map((stu, index) => (
-            <div
-              key={index}
-              style={{
-                padding: "8px 12px",
-                margin: "4px 0",
-                backgroundColor: "#f2f2f2",
-                borderRadius: "6px"
-              }}
-            >
-              {stu.pin} | {stu.name} | {stu.clgCode} | {stu.institutionName} | {stu.branch} | {stu.year}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  function handleTransferCertificate(student) {
+    console.log("Transfer Certificate selected for:", student);
+    n('/tc')
   }
+  function handleStudyCertificate(student) {
+    console.log("Study Certificate selected for:", student);
+  }
+
+  function handleBusPassApplication(student) {
+    console.log("Bus Pass Application selected for:", student);
+    n1('/bus')
+  }
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <h2>Student Certificate Portal</h2>
+
+      {/* Search Bar */}
+      <div style={{ textAlign: "right", marginBottom: "10px" }}>
+        <input
+          type="text"
+          placeholder="Enter PIN (e.g. 23635-cm-002)"
+          value={searchPin}
+          onChange={handleSearchChange}
+          style={{ padding: "5px" }}
+        />
+      </div>
+
+      {/* Filters */}
+      <div style={{ backgroundColor: "#add8e6", padding: "15px", borderRadius: "8px" }}>
+        <label>
+          Branch:{" "}
+          <select value={branch} onChange={handleBranchChange}>
+            <option value="">Select Branch</option>
+            <option value="CME">CME</option>
+            <option value="ECE">ECE</option>
+          </select>
+        </label>
+
+        <label style={{ marginLeft: "20px" }}>
+          Year:{" "}
+          <select value={year} onChange={handleYearChange}>
+            <option value="">Select Year</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+          </select>
+        </label>
+
+        <button onClick={handleFetchStudents} style={{ marginLeft: "20px" }}>
+          Fetch Students
+        </button>
+      </div>
+
+      {/* Error Message */}
+      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+
+      {/* Student List */}
+      <div style={{ marginTop: "20px" }}>
+        {students.map(function (stu) {
+          return (
+            <div key={stu._id} style={{ marginBottom: "10px" }}>
+              <button
+                style={{
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "10px",
+                  backgroundColor: "#f0f0f0",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+                onClick={function () {
+                  handleStudentClick(stu._id);
+                }}
+              >
+                {stu.pin} - {stu.name}
+              </button>
+
+              {selectedStudentId === stu._id && (
+                <div style={{ paddingLeft: "20px", marginTop: "10px" }}>
+                  <button
+                    style={{ marginRight: "10px" }}
+                    onClick={function () {
+                      handleTransferCertificate(stu);
+                    }}
+                  >
+                    Transfer Certificate
+                  </button>
+
+                  <button
+                    style={{ marginRight: "10px" }}
+                    onClick={function () {
+                      handleStudyCertificate(stu);
+                    }}
+                  >
+                    Study Certificate
+                  </button>
+
+                  <button
+                    onClick={function () {
+                      handleBusPassApplication(stu);
+                    }}
+                  >
+                    Bus Pass Application
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export default StudentPage;

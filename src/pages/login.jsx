@@ -31,7 +31,7 @@ import "./LoginPage.css";
               className="toggle"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? "❌" : "👁️"}
             </span>
           </div>
 
