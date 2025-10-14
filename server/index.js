@@ -3,43 +3,43 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 
-// 🔹 MongoDB connection
-mongoose
-  .connect("mongodb://127.0.0.1:27017/studentdb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+// ---------------- MongoDB Connection ----------------
+mongoose.connect("mongodb://127.0.0.1:27017/myprojectdb")
   .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("Mongo error:", err));
+  .catch(err => console.error("❌ MongoDB error:", err));
 
-// 🔹 Student Schema
+// ---------------- Schemas ----------------
+
+// Student (Admission Register)
 const studentSchema = new mongoose.Schema({
-  name: String,
   pin: String,
-  father: String,
+  name: String,
+  fatherName: String,
+  address: String,
+  category: String,
   nationality: String,
-  caste: String,
-  dob: String,
-  admission: String,
-  leaving: String,
-  class: String,
-  fees: String,
-  conduct: String,
-  appdate: String,
-  reason: String,
+  religion: String,
+  community: String,
+  admissionNo: String,
+  doa: String,
   branch: String,
   year: String,
+  result: String,
+  completionDate: String,
+  tcNoDate: String,
+  initials: String,
 });
+
 const Student = mongoose.model("Student", studentSchema);
 
-// 🔹 Certificate Schema
+// Transfer Certificate
 const certificateSchema = new mongoose.Schema({
   name: String,
   pin: String,
-  father: String,
+  fatherName: String,
   nationality: String,
   caste: String,
   dob: String,
@@ -50,52 +50,98 @@ const certificateSchema = new mongoose.Schema({
   conduct: String,
   appdate: String,
   reason: String,
-  createdAt: { type: Date, default: Date.now },
 });
+
 const Certificate = mongoose.model("Certificate", certificateSchema);
 
-// 🔹 GET Students with filters
-app.get("/students", async (req, res) => {
+// ---------------- Routes ----------------
+
+// Add new student
+app.post("/students", async function (req, res) {
   try {
-    const { pin, branch, year } = req.query;
-    let query = {};
-
-    if (pin) {
-      query.pin = pin;
-    } else {
-      if (branch) query.branch = branch;
-      if (year) query.year = year;
-    }
-
-    const students = await Student.find(query);
-    res.json(students);
+    var newStudent = new Student(req.body);
+    await newStudent.save();
+    res.json({ success: true, student: newStudent });
   } catch (err) {
-    console.error("Error fetching students:", err);
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// 🔹 POST Save Certificate
-app.post("/save-certificate", async (req, res) => {
+// Get students (filtered by pin OR branch+year)
+// Get students (filtered by pin OR branch+year)
+app.get("/students", async function (req, res) {
   try {
-    const certData = req.body;
+    const { pin, branch, year } = req.query;
 
-    if (!certData.pin) {
-      return res.status(400).json({ error: "PIN is required" });
+    let filter = {};
+
+    if (pin) filter.pin = pin;
+    else if (branch && year) {
+      filter.branch = branch;
+      filter.year = year;
+    } else {
+      return res.status(400).json({ error: "Provide PIN or both branch and year" });
     }
 
-    const newCert = new Certificate(certData);
-    await newCert.save();
-
-    res.status(201).json({ message: "Certificate saved successfully" });
+    const students = await Student.find(filter); // always returns array
+    res.json(students);
   } catch (err) {
-    console.error("Save certificate error:", err);
-    res.status(500).json({ error: "Failed to save certificate" });
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-// 🔹 Start Server
+
+// Update student
+app.put("/students/:id", async function (req, res) {
+  try {
+    const { id } = req.params;
+    var updatedStudent = await Student.findByIdAndUpdate(id, req.body, { new: true });
+    res.json(updatedStudent);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Delete student
+app.delete("/students/:id", async function (req, res) {
+  try {
+    const { id } = req.params;
+    await Student.findByIdAndDelete(id);
+    res.json({ success: true, message: "Deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Save Transfer Certificate
+app.post("/save-certificate", async function (req, res) {
+  try {
+    var newCert = new Certificate(req.body);
+    await newCert.save();
+    res.json({ success: true, certificate: newCert });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get all certificates (optional)
+app.get("/certificates", async function (req, res) {
+  try {
+    var certs = await Certificate.find();
+    res.json(certs);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ---------------- Start Server ----------------
 const PORT = 5000;
-app.listen(PORT, () => {
-  console.log("🚀 Server running on http://localhost:${PORT}");
+app.listen(PORT, function () {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
