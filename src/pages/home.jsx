@@ -3,12 +3,18 @@ import { useNavigate } from "react-router-dom";
 import "./HomePage.css"; 
 
 function HomePage() {
-  const n=useNavigate();
-function handletologin(e)
-{
-  e.preventDefault();
-  n('/login');
-}
+  const n = useNavigate();
+
+  function handletologin(e) {
+    e.preventDefault();
+    n('/login');
+  }
+
+  function handleAdmissionRegister(e) {
+    e.preventDefault();
+    n('/admission'); // your AdmissionRegister route
+  }
+
   return (
     <div className="homepage">
       <div className="overlay">
@@ -17,9 +23,14 @@ function handletologin(e)
         <div className="buttons">
           <button className="about-btn">About</button>
           <button className="login-btn" onClick={handletologin}>Login</button>
+          {/* New button for Admission Register */}
+          <button className="admission-btn" onClick={handleAdmissionRegister}>
+            Admission Register
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
 export default HomePage;

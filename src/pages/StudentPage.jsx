@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function StudentPage1() {
   const [students, setStudents] = useState([]);
@@ -21,29 +21,19 @@ function StudentPage1() {
     year: ""
   });
   const [editId, setEditId] = useState(null);
-  const [searchPin, setSearchPin] = useState("");
-  const [branchFilter, setBranchFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("");
   const [error, setError] = useState("");
 
-  // Load students based on search/filter
+  // ✅ Load ALL students on page load (Auto, no search needed)
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
   async function loadStudents() {
     setError("");
-    let url = "http://localhost:5000/students?";
-    if (searchPin) url += "pin=" + encodeURIComponent(searchPin);
-    else if (branchFilter && yearFilter) 
-      url += "branch=" + encodeURIComponent(branchFilter) + "&year=" + encodeURIComponent(yearFilter);
-    else {
-      setError("Enter PIN or select both Branch and Year");
-      setStudents([]);
-      return;
-    }
-
     try {
-      const res = await fetch(url);
+      const res = await fetch("http://localhost:5000/students");
       const data = await res.json();
-      if (!Array.isArray(data)) setStudents([data]);
-      else setStudents(data);
+      setStudents(data);
       if (!data || data.length === 0) setError("No students found");
     } catch (err) {
       console.error(err);
@@ -58,8 +48,10 @@ function StudentPage1() {
 
   async function saveStudent() {
     const method = editId ? "PUT" : "POST";
-    const url = editId ? `http://localhost:5000/students/${editId}` : "http://localhost:5000/students";
-    
+    const url = editId
+      ? `http://localhost:5000/students/${editId}`
+      : "http://localhost:5000/students";
+
     await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
@@ -102,13 +94,7 @@ function StudentPage1() {
     <div style={{ padding: "20px" }}>
       <h2>Student Admission & Course Records</h2>
 
-      {/* Search */}
-      <div style={{ marginBottom: "10px" }}>
-        <input placeholder="Search by PIN" value={searchPin} onChange={e => setSearchPin(e.target.value)} style={{ marginRight: "10px" }} />
-        <input placeholder="Branch" value={branchFilter} onChange={e => setBranchFilter(e.target.value)} style={{ marginRight: "10px" }} />
-        <input placeholder="Year" value={yearFilter} onChange={e => setYearFilter(e.target.value)} style={{ marginRight: "10px" }} />
-        <button onClick={loadStudents}>Search</button>
-      </div>
+      {/* ❌ Removed Search Section */}
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -142,13 +128,14 @@ function StudentPage1() {
       {/* Student List */}
       <h3>Saved Records</h3>
       <ul>
-        {Array.isArray(students) && students.map((s) => (
-          <li key={s._id}>
-            <b>{s.pin}</b> | {s.name} | {s.fatherName} | {s.branch} | {s.year} | {s.result} 
-            <button onClick={() => editStudent(s)}>Edit</button>
-            <button onClick={() => deleteStudent(s._id)}>Delete</button>
-          </li>
-        ))}
+        {Array.isArray(students) &&
+          students.map((s) => (
+            <li key={s._id}>
+              <b>{s.pin}</b> | {s.name} | {s.fatherName} | {s.branch} | {s.year} | {s.result}
+              <button onClick={() => editStudent(s)}>Edit</button>
+              <button onClick={() => deleteStudent(s._id)}>Delete</button>
+            </li>
+          ))}
       </ul>
     </div>
   );
