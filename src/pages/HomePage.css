@@ -1,3 +1,4 @@
+/* Background full screen */
 .homepage {
   height: 100vh;
   width: 100%;
@@ -6,47 +7,62 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  color: white;
-  text-align: center;
 }
 
+/* Dark overlay */
 .overlay {
   background: rgba(0, 0, 0, 0.6);
   width: 100%;
   height: 100%;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
 }
 
+/* Heading */
 h1 {
-  font-size: 2rem;
+  font-size: 2.8rem;
   margin-bottom: 10px;
+  font-weight: 700;
 }
 
+/* Sub text */
 p {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+  opacity: 0.9;
 }
 
+/* Buttons container */
 .buttons {
   display: flex;
+  flex-direction: column; /* stack vertically */
   gap: 15px;
-  justify-content: center;
+  align-items: center;
 }
 
+/* Default button style */
 .about-btn,
-.login-btn {
-  padding: 10px 0;
-  min-width: 140px;
-  text-align: center;
+.login-btn,
+.admission-btn {
+  width: 220px;
+  padding: 14px 0;
+  font-size: 18px;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
+  color: white;
 }
 
+/* Button Colors */
 .about-btn {
   background: crimson;
-  color: white;
 }
 
 .about-btn:hover {
@@ -54,13 +70,23 @@ p {
 }
 
 .login-btn {
-  background: royalblue;
-  background: lime;
-  width: 200px;
-  height: 60px;
-  color: white;
+  background: #ff6600;
 }
 
 .login-btn:hover {
-  background: navy;
+  background: #cc5200;
+}
+
+.admission-btn {
+  background: royalblue;
+}
+
+.admission-btn:hover {
+  background: #003f99;
+}
+
+/* Most important: STOP full-width buttons */
+.homepage button {
+  width: 220px !important;
+  display: inline-block !important;
 }

@@ -1,18 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./HomePage.css"; 
+import "./HomePage.css";
 
 function HomePage() {
   const n = useNavigate();
 
+  function handleAbout(e) {
+    e.preventDefault();
+    n("/about");
+  }
   function handletologin(e) {
     e.preventDefault();
-    n('/login');
+    n("/login");
   }
 
   function handleAdmissionRegister(e) {
     e.preventDefault();
-    n('/admission'); // your AdmissionRegister route
+    n("/admission");
   }
 
   return (
@@ -20,10 +24,14 @@ function HomePage() {
       <div className="overlay">
         <h1>Welcome to Government Polytechnic Chodavaram</h1>
         <p>Your Gateway to Excellence in Technical Education</p>
+
         <div className="buttons">
-          <button className="about-btn">About</button>
-          <button className="login-btn" onClick={handletologin}>Login</button>
-          {/* New button for Admission Register */}
+          <button className="about-btn" onClick={handleAbout} >About</button>
+
+          <button className="login-btn" onClick={handletologin}>
+            Login
+          </button>
+
           <button className="admission-btn" onClick={handleAdmissionRegister}>
             Admission Register
           </button>

@@ -28,7 +28,7 @@ function AdmissionBook() {
 
   return (
     <div style={{ margin: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>ADMISSION REGISTER</h1>
+      <h1 style={{ textAlign: "center", color: "red" }}>ADMISSION REGISTER</h1>
 
       {pages.map(function (page, pageIndex) {
         return (
@@ -42,10 +42,21 @@ function AdmissionBook() {
               pageBreakAfter: "always",
             }}
           >
-            <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
+            {/* PAGE TITLE */}
+            <h3
+              style={{
+                textAlign: "center",
+                marginBottom: "10px",
+                backgroundColor: "red",
+                color: "white",
+                padding: "6px",
+                borderRadius: "4px",
+              }}
+            >
               Page {pageIndex + 1}
             </h3>
 
+            {/* TABLE */}
             <table
               style={{
                 width: "100%",
@@ -55,7 +66,13 @@ function AdmissionBook() {
               }}
             >
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
+                <tr
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >
                   <th style={{ border: "1px solid black", width: "3%" }}>S.No</th>
                   <th style={{ border: "1px solid black", width: "7%" }}>PIN No</th>
                   <th style={{ border: "1px solid black", width: "14%" }}>Full Name</th>
@@ -79,23 +96,60 @@ function AdmissionBook() {
                     <tr key={sno} style={{ height: "50px" }}>
                       <td style={{ border: "1px solid black", textAlign: "center" }}>{sno}</td>
                       <td style={{ border: "1px solid black", textAlign: "center" }}>{student.pin}</td>
-                      <td style={{ border: "1px solid black", wordBreak: "break-word", whiteSpace: "normal" }}>{student.name}</td>
-                      <td style={{ border: "1px solid black", wordBreak: "break-word", whiteSpace: "normal" }}>
-                        {student.fatherName}<br />{student.address}
+                      <td
+                        style={{
+                          border: "1px solid black",
+                          wordBreak: "break-word",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {student.name}
                       </td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.category}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.nationality}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.religion}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.doa}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.tcNoDate}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.result}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.completionDate}</td>
-                      <td style={{ border: "1px solid black", textAlign: "center" }}>{student.dateOfIssueTC}</td>
+                      <td
+                        style={{
+                          border: "1px solid black",
+                          wordBreak: "break-word",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {student.fatherName}
+                        <br />
+                        {student.address}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.category}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.nationality}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.religion}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.doa}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.tcNoDate}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.result}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.completionDate}
+                      </td>
+                      <td style={{ border: "1px solid black", textAlign: "center" }}>
+                        {student.dateOfIssueTC}
+                      </td>
                       <td style={{ border: "1px solid black", textAlign: "center" }}>
                         <input
                           type="text"
                           defaultValue=""
-                          style={{ width: "100%", border: "none", textAlign: "center", background: "transparent" }}
+                          style={{
+                            width: "100%",
+                            border: "none",
+                            textAlign: "center",
+                            background: "transparent",
+                          }}
                         />
                       </td>
                     </tr>

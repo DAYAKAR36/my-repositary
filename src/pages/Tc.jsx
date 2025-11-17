@@ -11,7 +11,6 @@ function TransferCertificate() {
 
   const today = new Date().toISOString().split("T")[0];
 
-  // Redirect if no student is selected
   useEffect(() => {
     if (!student) {
       alert("No student selected! Redirecting back.");
@@ -19,7 +18,6 @@ function TransferCertificate() {
     }
   }, [student, navigate]);
 
-  // Initialize formData with student info or default values
   const [formData, setFormData] = useState({
     name: student?.name || "",
     pin: student?.pin || "",
@@ -66,7 +64,13 @@ function TransferCertificate() {
   }
 
   function handlePrint() {
+    const printContents = certRef.current.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
     window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload();
   }
 
   function handleDownload() {
@@ -81,45 +85,56 @@ function TransferCertificate() {
     html2pdf().from(element).set(opts).save();
   }
 
-  function handleSave() {
-    fetch("http://localhost:5000/save-certificate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => alert(res.ok ? "Certificate saved successfully." : "Failed to save."))
-      .catch((err) => {
-        console.error(err);
-        alert("Error occurred while saving.");
-      });
-  }
+  // 🔴 Button Theme (same as StudentPage)
+  const redBtn = {
+    padding: "10px 20px",
+    background: "#b60000",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+  };
 
   return (
     <div style={{ padding: "30px", fontFamily: "Arial" }}>
-      <h2 style={{ textAlign: "center", textDecoration: "underline" }}>Transfer Certificate Form</h2>
+      <h2 style={{ textAlign: "center", textDecoration: "underline" }}>
+        Transfer Certificate Form
+      </h2>
 
       {/* Editable Form */}
       <div style={{ marginTop: "20px" }}>
         {Object.keys(formData).map((key) => {
-          const type = ["dob", "admission", "leaving", "appdate"].includes(key) ? "date" : "text";
+          const type = ["dob", "admission", "leaving", "appdate"].includes(key)
+            ? "date"
+            : "text";
           return (
             <div key={key} style={{ marginBottom: "8px" }}>
-              <label style={{ display: "inline-block", width: "250px" }}>{fieldLabels[key]}:</label>
+              <label style={{ display: "inline-block", width: "250px" }}>
+                {fieldLabels[key]}:
+              </label>
               <input
                 type={type}
                 id={key}
                 value={formData[key]}
                 onChange={handleChange}
-                style={{ width: "300px", padding: "5px" }}
+                style={{
+                  width: "300px",
+                  padding: "6px",
+                  border: "1px solid #777",
+                  borderRadius: "4px",
+                }}
               />
             </div>
           );
         })}
 
-        <button onClick={generateCertificate} style={{ marginTop: "15px" }}>
+        {/* 🔴 Themed Buttons */}
+        <button onClick={generateCertificate} style={redBtn}>
           Generate Certificate
         </button>
-        <button onClick={() => navigate(-1)} style={{ marginLeft: "10px" }}>
+
+        <button onClick={() => navigate(-1)} style={{ ...redBtn, marginLeft: "10px" }}>
           Back
         </button>
       </div>
@@ -131,40 +146,62 @@ function TransferCertificate() {
             ref={certRef}
             style={{
               border: "2px solid black",
-              padding: "20px",
+              padding: "30px",
               backgroundColor: "white",
+              width: "800px",
+              margin: "auto",
+              lineHeight: "1.8em",
             }}
           >
             <h2 style={{ textAlign: "center" }}>GOVERNMENT POLYTECHNIC</h2>
             <h3 style={{ textAlign: "center" }}>CHODAVARAM - 521 032</h3>
-            <h3 style={{ textAlign: "center", textDecoration: "underline" }}>TRANSFER CERTIFICATE</h3>
+            <h3
+              style={{
+                textAlign: "center",
+                textDecoration: "underline",
+                marginBottom: "20px",
+              }}
+            >
+              TRANSFER CERTIFICATE
+            </h3>
 
-            <table style={{ width: "100%", lineHeight: "1.8em" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>
                 {Object.keys(formData).map((key) => (
                   <tr key={key}>
-                    <td style={{ width: "40%", paddingRight: "10px" }}>{fieldLabels[key]}</td>
-                    <td>{formData[key]}</td>
+                    <td
+                      style={{
+                        width: "45%",
+                        padding: "6px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {fieldLabels[key]}
+                    </td>
+                    <td style={{ padding: "6px" }}>{formData[key]}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
 
             <br />
-            <p style={{ float: "left" }}>Head of Section</p>
-            <p style={{ float: "right" }}>Director</p>
-            <div style={{ clear: "both" }}></div>
+
+            <div style={{ marginTop: "30px" }}>
+              <p style={{ float: "left" }}>Head of Section</p>
+              <p style={{ float: "right" }}>Director</p>
+              <div style={{ clear: "both" }}></div>
+            </div>
           </div>
 
-          {/* Actions */}
-          <div style={{ marginTop: "20px" }}>
-            <button onClick={handlePrint} style={{ marginRight: "10px" }}>
+          {/* 🔴 Themed Buttons */}
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <button onClick={handlePrint} style={{ ...redBtn, marginRight: "10px" }}>
               Print
             </button>
-            <button onClick={handleDownload} style={{ marginRight: "10px" }}>
+
+            <button onClick={handleDownload} style={{ ...redBtn, marginRight: "10px" }}>
               Download PDF
             </button>
-            <button onClick={handleSave}>Save</button>
           </div>
         </div>
       )}
