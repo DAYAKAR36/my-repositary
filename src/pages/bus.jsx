@@ -4,7 +4,9 @@ import html2pdf from "html2pdf.js";
 function StudentBusPassForm() {
   const certRef = useRef(null);
 
-  const [formData,setFormData] = useState({}); // Optional: store form values if needed
+  // eslint-disable-next-line
+const [formData, setFormData] = useState({});
+
 
   // Print function
   const handlePrint = () => {

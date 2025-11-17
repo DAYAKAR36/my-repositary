@@ -2,13 +2,32 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 
- function LoginPage() {
+function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const n=useNavigate();
-  function handlelogin(e)
-  {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const n = useNavigate();
+
+  function handlelogin(e) {
     e.preventDefault();
-  n('/sel')
+
+    // Email validation
+    if (email !== "gptcvrm635@gmail.com") {
+      setError("Invalid Email!");
+      return;
+    }
+
+    // Password validation
+    if (password !== "gptcvrm") {
+      setError("Incorrect Password!");
+      return;
+    }
+
+    // Clear errors and navigate
+    setError("");
+    n("/sel");
   }
 
   return (
@@ -16,15 +35,23 @@ import "./LoginPage.css";
       <div className="login-box">
         <h2>Admin Login</h2>
 
-        <form>
+        <form onSubmit={handlelogin}>
           <label>Email</label>
-          <input type="email" placeholder="Enter your email" required />
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
           <label>Password</label>
           <div className="password-wrapper">
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
             <span
@@ -35,7 +62,9 @@ import "./LoginPage.css";
             </span>
           </div>
 
-          <button type="submit" className="login-btn" onClick={handlelogin}>
+          {error && <p className="error-msg">{error}</p>}
+
+          <button type="submit" className="login-btn">
             Login
           </button>
         </form>
@@ -45,4 +74,5 @@ import "./LoginPage.css";
     </div>
   );
 }
+
 export default LoginPage;
