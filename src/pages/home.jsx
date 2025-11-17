@@ -35,6 +35,9 @@ function HomePage() {
           <button className="admission-btn" onClick={handleAdmissionRegister}>
             Admission Register
           </button>
+          <button className="admin" onClick={() => n("/admin")}>
+            Student Admin
+          </button>
         </div>
       </div>
     </div>

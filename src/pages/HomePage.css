@@ -47,6 +47,7 @@ p {
 
 /* Default button style */
 .about-btn,
+.admin,
 .login-btn,
 .admission-btn {
   width: 220px;
@@ -62,11 +63,11 @@ p {
 
 /* Button Colors */
 .about-btn {
-  background: crimson;
+  background: #ff6600;
 }
 
 .about-btn:hover {
-  background: darkred;
+  background: #cc5200;
 }
 
 .login-btn {
@@ -89,4 +90,11 @@ p {
 .homepage button {
   width: 220px !important;
   display: inline-block !important;
+}
+.admin {
+  background: royalblue;
+}
+
+.admin:hover {
+  background: #003f99;
 }

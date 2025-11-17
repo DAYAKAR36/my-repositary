@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// 🔴 SAME THEME AS PREVIOUS (White card + Red top border + Styled inputs)
+// 🔴 SAME THEME STYLES
 const styles = {
   card: {
     background: "#fff",
@@ -21,11 +21,6 @@ const styles = {
     display: "flex",
     flexWrap: "wrap",
   },
-  label: {
-    fontWeight: "bold",
-    marginTop: "10px",
-    display: "block",
-  },
   btn: {
     padding: "10px 20px",
     background: "#cc0000",
@@ -33,7 +28,6 @@ const styles = {
     color: "white",
     borderRadius: "6px",
     cursor: "pointer",
-    marginTop: "10px",
   },
   listItem: {
     background: "#fff",
@@ -139,11 +133,24 @@ function StudentPage1() {
 
   return (
     <div style={{ padding: "20px" }}>
+
+      {/* 🔴 THREE TOP BUTTONS SAME STYLE */}
+      <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+        <button style={styles.btn} onClick={() => window.location.href = "/"}>
+          Home
+        </button>
+
+        <button style={styles.btn} onClick={() => window.location.href = "/admission"}>
+          Admission
+        </button>
+
+        </div>
+
       <h2 style={{ marginBottom: "20px" }}>Student Admission & Course Records</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* 🔴 SAME THEME CARD */}
+      {/* 🔴 ADMISSION FORM */}
       <div style={styles.card}>
         <h3>Admission Details</h3>
         <div style={styles.row}>
@@ -162,7 +169,7 @@ function StudentPage1() {
         </div>
       </div>
 
-      {/* 🔴 COURSE DETAILS THEME CARD */}
+      {/* 🔴 COURSE DETAILS */}
       <div style={styles.card}>
         <h3>Course Completion Details</h3>
         <div style={styles.row}>
@@ -189,6 +196,7 @@ function StudentPage1() {
           </div>
         </div>
       ))}
+
     </div>
   );
 }
