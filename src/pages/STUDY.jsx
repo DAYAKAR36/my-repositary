@@ -1,25 +1,33 @@
 import React, { useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
-import { useLocation } from "react-router-dom";
 
 function StudyConductCertificate() {
-  const { state } = useLocation();
-  const student = state?.student;
+  // Fixed student details
+  const student = {
+    name: "John Doe",
+    fatherName: "Sri XYZ",
+    pin: "24635-cm-021",
+    branch: "CME",
+    doa: "2022",
+    completionDate: "2025"
+  };
+
+  // Fixed date
+  const today = "2025-11-18";
 
   const certificateRef = useRef();
 
-  const today = new Date().toISOString().split("T")[0];
-
+  // Form data initialized from fixed values
   const [formData, setFormData] = useState({
-    slno: "",
+    slno: "1",
     date: today,
-    name: student?.name || "",
-    fatherName: student?.fatherName || "",
-    pin: student?.pin || "",
-    branch: student?.branch || "",
-    doa: student?.doa || "",
-    completionDate: student?.completionDate || "",
-    conduct: "",
+    name: student.name,
+    fatherName: student.fatherName,
+    pin: student.pin,
+    branch: student.branch,
+    doa: student.doa,
+    completionDate: student.completionDate,
+    conduct: "Good"
   });
 
   function handleChange(e) {
@@ -51,134 +59,112 @@ function StudyConductCertificate() {
   return (
     <>
       <style>{`
-        body { font-family: Arial,sans-serif; margin: 40px; }
-        .certificate { border: 2px solid black; padding: 20px; width: 800px; }
-        .h2 { text-align: center; font-weight: bold; font-family:Constantia; background-color:black; color:white; }
-        .center { text-align: center; font-weight: bold; font-family:Constantia; }
-        .center1 { text-align: center; font-weight: bold; font-family:Calibri; }
-        .inputs { width: 500px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .inputs1 { width: 150px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l1 { width: 530px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l2 { width: 350px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l3 { width: 220px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l4 { width: 450px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l5 { width: 200px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l6 { width: 175px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .l7 { width: 280px; border: none; border-bottom: 2px dotted black; outline: none; font-size: 16px; font-family: Constantia; }
-        .signatures { margin-top: 40px; display: flex; justify-content: space-between; font-family:Constantia; font-style:italic; }
-        .plain-input { font-family:Constantia; font-style:italic; font-weight:bold; border:none; outline:none; }
-        .content { font-style:italic; font-family:Constantia; font-weight:bold; }
-        .buttons { margin-top: 20px; display: flex; justify-content: center; gap: 10px; }
-        .buttons button { padding: 8px 16px; font-size: 16px; }
+        body {
+          background: #f5f6f7;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+
+        .certificate {
+          background: #fff;
+          padding: 25px;
+          width: 800px;
+          margin: 40px auto;
+          border-radius: 12px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .h2 {
+          text-align: center;
+          font-weight: bold;
+          font-family: Constantia;
+          background-color: #080808ff; 
+          color: white;
+          padding: 6px 0;
+          border-radius: 6px;
+        }
+
+        .center {
+          text-align: center;
+          font-weight: bold;
+          font-family: Constantia;
+        }
+
+        .center1 {
+          text-align: center;
+          font-weight: bold;
+          font-family: Calibri;
+        }
+
+        .inputs,
+        .inputs1,
+        .l1, .l2, .l3, .l4, .l5, .l6, .l7 {
+          border: none;
+          border-bottom: 2px dotted #0e0d0dff;
+          outline: none;
+          font-size: 16px;
+          font-family: Constantia;
+          padding-left: 4px;
+        }
+
+        .inputs { width: 500px; }
+        .inputs1 { width: 150px; }
+        .l1 { width: 500px; }
+        .l2 { width: 300px; }
+        .l3 { width: 250px; }
+        .l4 { width: 400px; }
+        .l5 { width: 140px; }
+        .l6 { width: 145px; }
+        .l7 { width: 200px; }
+
+        .plain-input {
+          font-family: Constantia;
+          font-style: italic;
+          font-weight: bold;
+          border: none;
+          outline: none;
+        }
+
+        .content {
+          font-style: italic;
+          font-family: Constantia;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .signatures {
+          margin-top: 40px;
+          display: flex;
+          justify-content: space-between;
+          font-family: Constantia;
+          font-style: italic;
+          font-weight: bold;
+          color: #444;
+        }
+
+        .buttons {
+          margin-top: 20px;
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+        }
+
+        .buttons button {
+          background: #b60000;
+          color: white;
+          padding: 10px 18px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-weight: bold;
+          transition: 0.2s;
+        }
+
+        .buttons button:hover {
+          background: #8d0000;
+        }
       `}</style>
-      <style>{`
-  body {
-    background: #f5f6f7;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-
-  .certificate {
-    background: #fff;
-    padding: 25px;
-    width: 800px;
-    margin: 40px auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
-
-  .h2 {
-    text-align: center;
-    font-weight: bold;
-    font-family: Constantia;
-    background-color: #080808ff; 
-    color: white;
-    padding: 6px 0;
-    border-radius: 6px;
-  }
-
-  .center {
-    text-align: center;
-    font-weight: bold;
-    font-family: Constantia;
-  }
-
-  .center1 {
-    text-align: center;
-    font-weight: bold;
-    font-family: Calibri;
-  }
-
-  .inputs,
-  .inputs1,
-  .l1, .l2, .l3, .l4, .l5, .l6, .l7 {
-    border: none;
-    border-bottom: 2px dotted #b60000;
-    outline: none;
-    font-size: 16px;
-    font-family: Constantia;
-    padding-left: 4px;
-  }
-
-  .inputs { width: 500px; }
-  .inputs1 { width: 150px; }
-  .l1 { width: 530px; }
-  .l2 { width: 350px; }
-  .l3 { width: 220px; }
-  .l4 { width: 450px; }
-  .l5 { width: 200px; }
-  .l6 { width: 175px; }
-  .l7 { width: 280px; }
-
-  .plain-input {
-    font-family: Constantia;
-    font-style: italic;
-    font-weight: bold;
-    border: none;
-    outline: none;
-  }
-
-  .content {
-    font-style: italic;
-    font-family: Constantia;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .signatures {
-    margin-top: 40px;
-    display: flex;
-    justify-content: space-between;
-    font-family: Constantia;
-    font-style: italic;
-    font-weight: bold;
-    color: #444;
-  }
-
-  .buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .buttons button {
-    background: #b60000;
-    color: white;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-  }
-
-  .buttons button:hover {
-    background: #8d0000;
-  }
-`}</style>
-
 
       <div style={{ padding: "30px", fontFamily: "Arial" }}>
         <div ref={certificateRef} className="certificate">
